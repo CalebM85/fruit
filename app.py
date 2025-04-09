@@ -27,6 +27,24 @@ with st.expander("📄 Deal Summary"):
     - **KBRA Base Case Loss Expectation**: 8.90%
     """)
 
+# Time-based performance trends (static pool example data)
+static_pool = pd.DataFrame({
+    'Month': ["Month 1", "Month 2", "Month 3", "Month 4", "Month 5", "Month 6"],
+    'Cumulative Net Loss (%)': [0.2, 0.5, 0.9, 1.3, 1.7, 2.1],
+    '30+ DQ Rate (%)': [0.5, 0.8, 1.1, 1.5, 1.6, 1.8]
+})
+
+# Line chart for losses and delinquencies
+loss_fig = px.line(static_pool, x='Month', y='Cumulative Net Loss (%)', markers=True, title="📉 Static Pool Cumulative Net Loss")
+dq_fig = px.line(static_pool, x='Month', y='30+ DQ Rate (%)', markers=True, title="📊 Static Pool 30+ Day Delinquency Rate")
+
+# Render charts
+col_a, col_b = st.columns(2)
+with col_a:
+    st.plotly_chart(loss_fig, use_container_width=True)
+with col_b:
+    st.plotly_chart(dq_fig, use_container_width=True)
+    
 # Data Definitions
 promo_vs_nonpromo = pd.DataFrame({
     'Type': ['Promotional (0% APR)', 'Non-Promotional'],
