@@ -53,6 +53,20 @@ merchant_concentration = pd.DataFrame({
     'Balance ($M)': [16.1, 5.3, 2.0, 1.8, 1.4, 1.3, 1.25, 1.18, 1.02, 0.98]
 })
 
+loan_terms = pd.DataFrame({
+    'Term (Months)': ['3', '6', '12', '18', '24', '36', '48', '60'],
+    'Balance ($M)': [3.6, 21.5, 59.5, 31.6, 95.6, 16.8, 9.1, 33.9]
+})
+
+loan_buckets = pd.DataFrame({
+    'Loan Size Bucket': [
+        '$0–499', '$500–999', '$1,000–1,499', '$1,500–1,999',
+        '$2,000–2,499', '$2,500–2,999', '$3,000–3,499', '$3,500–3,999',
+        '$4,000–4,999', '$5,000–7,499', '$7,500–9,999', '$10,000–14,999', '$15,000+'
+    ],
+    'Balance ($M)': [7.4, 18.2, 19.7, 21.5, 20.0, 18.5, 15.0, 14.2, 30.1, 39.0, 24.8, 20.9, 22.4]
+})
+
 cashflow_waterfall = go.Figure(go.Waterfall(
     name="Cash Flow Structure",
     orientation="v",
@@ -64,47 +78,37 @@ cashflow_waterfall = go.Figure(go.Waterfall(
 ))
 cashflow_waterfall.update_layout(title="📉 Credit Enhancement Waterfall (Class A)", showlegend=False)
 
-# Interactivity: Filters
-with st.sidebar:
-    st.header("🔍 Filters")
-    state_filter = st.multiselect("Select States", options=state_concentration['State'].unique(), default=state_concentration['State'].unique())
-    score_filter = st.multiselect("Select Credit Score Bands", options=vantage_scores['Score Band'].unique(), default=vantage_scores['Score Band'].unique())
-    industry_filter = st.multiselect("Select Industries", options=industries['Industry'].unique(), default=industries['Industry'].unique())
-    loan_type_filter = st.multiselect("Select Loan Types", options=promo_vs_nonpromo['Type'].unique(), default=promo_vs_nonpromo['Type'].unique())
-
-# Apply filters
-filtered_states = state_concentration[state_concentration['State'].isin(state_filter)]
-filtered_scores = vantage_scores[vantage_scores['Score Band'].isin(score_filter)]
-filtered_industries = industries[industries['Industry'].isin(industry_filter)]
-filtered_loans = promo_vs_nonpromo[promo_vs_nonpromo['Type'].isin(loan_type_filter)]
-
 # Layout: Charts
 col1, col2 = st.columns(2)
 
 with col1:
-    st.plotly_chart(px.pie(filtered_loans, names='Type', values='Balance ($M)', title='Loan Type Distribution'), use_container_width=True)
-    st.plotly_chart(px.bar(filtered_scores, x='Score Band', y='Distribution (%)', title='Filtered Vantage Score Distribution'), use_container_width=True)
+    st.plotly_chart(px.pie(promo_vs_nonpromo, names='Type', values='Balance ($M)', title='Loan Type Distribution'), use_container_width=True)
+    st.plotly_chart(px.bar(vantage_scores, x='Score Band', y='Distribution (%)', title='Vantage Score Distribution'), use_container_width=True)
 
 with col2:
-    st.plotly_chart(px.bar(filtered_states, x='State', y='Balance ($M)', title='Filtered Top State Concentrations'), use_container_width=True)
-    st.plotly_chart(px.pie(filtered_industries, names='Industry', values='Balance ($M)', title='Industry Mix'), use_container_width=True)
+    st.plotly_chart(px.bar(state_concentration, x='State', y='Balance ($M)', title='Top State Concentrations'), use_container_width=True)
+    st.plotly_chart(px.pie(industries, names='Industry', values='Balance ($M)', title='Industry Mix'), use_container_width=True)
 
 # New row
 col3, col4 = st.columns(2)
 
 with col3:
     st.plotly_chart(px.bar(merchant_concentration, x='Merchant', y='Balance ($M)', title='Top 10 Merchant Concentrations'), use_container_width=True)
+    st.plotly_chart(px.bar(loan_terms, x='Term (Months)', y='Balance ($M)', title='Receivable Term Distribution'), use_container_width=True)
 
 with col4:
     st.plotly_chart(cashflow_waterfall, use_container_width=True)
+    st.plotly_chart(px.bar(loan_buckets, x='Loan Size Bucket', y='Balance ($M)', title='Loan Size Buckets Distribution'), use_container_width=True)
 
 # Export
 st.sidebar.header("📥 Export")
 export_data = {
-    'States': filtered_states,
-    'Scores': filtered_scores,
-    'Industries': filtered_industries,
-    'Loan Types': filtered_loans
+    'States': state_concentration,
+    'Scores': vantage_scores,
+    'Industries': industries,
+    'Loan Types': promo_vs_nonpromo,
+    'Terms': loan_terms,
+    'Loan Buckets': loan_buckets
 }
 selected_export = st.sidebar.selectbox("Choose data to export", list(export_data.keys()))
 
