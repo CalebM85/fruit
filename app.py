@@ -40,7 +40,9 @@ vantage_scores = pd.DataFrame({
 
 state_concentration = pd.DataFrame({
     'State': ['California', 'Florida', 'Texas', 'New York', 'Arizona'],
-    'Balance ($M)': [43.6, 37.5, 36.8, 16.2, 10.3]
+    'Balance ($M)': [43.6, 37.5, 36.8, 16.2, 10.3],
+    'Avg Vantage Score': [705, 695, 690, 700, 685],
+    'Avg APR (%)': [9.5, 10.2, 10.0, 9.8, 10.5]
 })
 
 industries = pd.DataFrame({
@@ -66,6 +68,8 @@ loan_buckets = pd.DataFrame({
     ],
     'Balance ($M)': [7.4, 18.2, 19.7, 21.5, 20.0, 18.5, 15.0, 14.2, 30.1, 39.0, 24.8, 20.9, 22.4]
 })
+
+state_concentration['State Code'] = ['CA', 'FL', 'TX', 'NY', 'AZ']
 
 cashflow_waterfall = go.Figure(go.Waterfall(
     name="Cash Flow Structure",
@@ -99,6 +103,41 @@ with col3:
 with col4:
     st.plotly_chart(cashflow_waterfall, use_container_width=True)
     st.plotly_chart(px.bar(loan_buckets, x='Loan Size Bucket', y='Balance ($M)', title='Loan Size Buckets Distribution'), use_container_width=True)
+
+# Geo Heatmaps
+st.markdown("### 🌍 Geographic Heatmaps")
+geo_fig_balance = px.choropleth(
+    state_concentration,
+    locations="State Code",
+    locationmode="USA-states",
+    color="Balance ($M)",
+    color_continuous_scale="Blues",
+    scope="usa",
+    labels={"Balance ($M)": "Loan Balance ($M)"},
+    title="Loan Concentration by State"
+)
+geo_fig_score = px.choropleth(
+    state_concentration,
+    locations="State Code",
+    locationmode="USA-states",
+    color="Avg Vantage Score",
+    color_continuous_scale="Greens",
+    scope="usa",
+    title="Average Vantage Score by State"
+)
+geo_fig_apr = px.choropleth(
+    state_concentration,
+    locations="State Code",
+    locationmode="USA-states",
+    color="Avg APR (%)",
+    color_continuous_scale="Reds",
+    scope="usa",
+    title="Average APR by State"
+)
+
+st.plotly_chart(geo_fig_balance, use_container_width=True)
+st.plotly_chart(geo_fig_score, use_container_width=True)
+st.plotly_chart(geo_fig_apr, use_container_width=True)
 
 # Export
 st.sidebar.header("📥 Export")
