@@ -4,8 +4,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Set up page
-st.set_page_config(page_title="Cherry Securitization Trust 2024-1 Dashboard", layout="wide")
-st.title("📊 Cherry Securitization Trust 2024-1 Dashboard")
+st.set_page_config(page_title="Securitization Dashboard", layout="wide")
+st.title("📊 Securitization Dashboard")
 st.markdown("""
 A visual breakdown of the pre-sale report to help analyze the collateral pool, structure, and credit enhancement.
 """)
@@ -13,8 +13,8 @@ A visual breakdown of the pre-sale report to help analyze the collateral pool, s
 # Deal Summary
 with st.expander("📄 Deal Summary"):
     st.write("""
-    - **Deal Name**: Cherry Securitization Trust 2024-1  
-    - **Issue Date**: Expected October 2, 2024  
+    - **Deal Name**: Securitization 2024  
+    - **Issue Date**: Expected October 2024  
     - **Total Issuance**: $250,000,000  
     - **Revolving Period**: 24 months (ends Sept 30, 2026 or earlier upon Amortization Event)
     - **Rated Notes**:
@@ -175,5 +175,5 @@ st.sidebar.download_button("Download CSV", csv, f"{selected_export.lower().repla
 # Footer
 st.markdown("""
 ---
-**Data Source**: KBRA Pre-Sale Report for Cherry Securitization Trust 2024-1 (September 2024)
+**Thanks for listening to my TED talk**
 """)
